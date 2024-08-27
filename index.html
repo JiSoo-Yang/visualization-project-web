@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>6조 시각화 프로젝트</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<!-- D3.js와 Danfo.js가 사용자 스크립트 전에 로드되도록 하세요 -->
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+		<script src="https://d3js.org/d3.v6.min.js"></script>
+		<script src="https://unpkg.com/topojson@3"></script>
+		<script src="assets/js/choroplethMap.js"></script>
+	</head>	
+	<body class="landing is-preload">
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header" class="alt">
+						<h1><a href="index.html">SAFELY</a></h1>
+						<nav id="nav">
+							<ul>
+								<li class="special">
+									<a href="#menu" class="menuToggle"><span>Menu</span></a>
+									<div id="menu">
+										<ul>
+											<li><a href="index.html">Home</a></li>
+											<li><a href="generic.html">Generic</a></li>
+											<li><a href="elements.html">Elements</a></li>
+											<li><a href="#">Sign Up</a></li>
+											<li><a href="#">Log In</a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Banner -->
+					<section id="banner">
+						<div class="inner">
+							<h2>운전하기 좋은 날</h2>
+							<h3>초보운전, <br />
+							언제가 가장 안전할까?</h3>
+							<ul class="actions special">
+								<li><a href="#" class="button primary">START</a></li>
+							</ul>
+						</div>
+						<a href="#one" class="more scrolly">Learn More</a>
+					</section>
+
+				<!-- One -->
+				<section id="one" class="wrapper style1 special">
+					<div class="inner">
+						<header class="major">
+							<h2>그 전에,<br />
+								전국에서 교통사고가 많이 발생하는 지역은 어디일까?</h2>
+							<p>전국 교통사고 다발 지역 시각화 (2012-2021)</p>
+						</header>
+						<!-- 지도 표시 영역 -->
+						<div id="choroplethMap" style="width: 100%; height: 500px;"></div>
+				
+						<!-- 표 추가 영역 -->
+						<header class="major" style="margin-top: 40px;">
+							<h3>⦁ 사고지역위치명으로 합산한 사고 다발 지역 (전국 Top20)</h3>
+						</header>
+						<div class="table-wrapper">
+							<table id="accidentTable">
+								<thead>
+									<tr>
+										<th>순위</th>
+										<th>사고지역위치명</th>
+										<th>사고건수</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- JavaScript에서 데이터가 추가됩니다 -->
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+				
+
+				<!-- Two -->
+					<section id="two" class="wrapper alt style2">
+						<section class="spotlight">
+							<div class="image"><img src="images/pic01.jpg" alt="" /></div><div class="content">
+								<h2>운전하기에 적절한 요일, 시간대는 언제일까?</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
+							</div>
+						</section>
+						<section class="spotlight">
+							<div class="image"><img src="images/pic02.jpg" alt="" /></div><div class="content">
+								<h2>특정 기간의 교통사고 추이는 어떻게 변화했을까?</h2>
+								<p>[가설1] 고령화와 저출산의 영향으로 어린이 인구가 감소하면서, <span style="text-decoration: underline; text-decoration-color: red; text-underline-offset: 0.2em; text-decoration-thickness: 2px;">어린이날의 교통사고 발생 건수도 감소할 것이다.</span></p>
+								<p>[가설2] 비대면 명절 문화의 확산 등 사회적 변화로 인해 <span style="text-decoration: underline; text-decoration-color: red; text-underline-offset: 0.2em; text-decoration-thickness: 2px;">명절 기간 동안의 유동인구가 감소하면서 교통사고 발생 건수도 줄어들 것이다.</span></p>
+								<p>[가설3] 월드컵 기간에는 유동인구가 증가하여 <span style="text-decoration: underline; text-decoration-color: red; text-underline-offset: 0.2em; text-decoration-thickness: 2px;">교통사고 발생 건수도 증가할 것이다.</span></p>
+							</div>
+						</section>
+						<section class="spotlight">
+							<div class="image"><img src="images/pic03.jpg" alt="" /></div><div class="content">
+								<h2>미세먼지에 따른 교통사고건수 변화는?</h2>
+							</div>
+						</section>
+						<section class="spotlight">
+							<div class="image"><img src="images/pic03.jpg" alt="" /></div><div class="content">
+								<h2>주가 등락률에 따른 교통사고건수 변화는?</h2>
+							</div>
+						</section>
+					</section>
+
+				<!-- Three -->
+					<section id="three" class="wrapper style3 special">
+						<div class="inner">
+							<header class="major">
+								<h2>Accumsan mus tortor nunc aliquet</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum. Donec amet imperdiet eleifend<br />
+								fringilla tincidunt. Nullam dui leo Aenean mi ligula, rhoncus ullamcorper.</p>
+							</header>
+							<ul class="features">
+								<li class="icon fa-paper-plane">
+									<h3>Arcu accumsan</h3>
+									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
+								</li>
+								<li class="icon solid fa-laptop">
+									<h3>Ac Augue Eget</h3>
+									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
+								</li>
+								<li class="icon solid fa-code">
+									<h3>Mus Scelerisque</h3>
+									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
+								</li>
+								<li class="icon solid fa-headphones-alt">
+									<h3>Mauris Imperdiet</h3>
+									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
+								</li>
+								<li class="icon fa-heart">
+									<h3>Aenean Primis</h3>
+									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
+								</li>
+								<li class="icon fa-flag">
+									<h3>Tortor Ut</h3>
+									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
+								</li>
+							</ul>
+						</div>
+					</section>
+
+				<!-- CTA -->
+					<section id="cta" class="wrapper style4">
+						<div class="inner">
+							<header>
+								<h2>Arcue ut vel commodo</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum endrerit imperdiet amet eleifend fringilla.</p>
+							</header>
+							<ul class="actions stacked">
+								<li><a href="#" class="button fit primary">Activate</a></li>
+								<li><a href="#" class="button fit">Learn More</a></li>
+							</ul>
+						</div>
+					</section>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<ul class="icons">
+							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+							<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+						<ul class="copyright">
+							<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						</ul>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="assets/js/table.js"></script>
+	</body>
+</html>
