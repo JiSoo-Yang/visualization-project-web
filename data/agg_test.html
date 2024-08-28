@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3.js Scatter Plot with JSON Data</title>
+    <script src="https://unpkg.com/topojson@3"></script>
+	<script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        // Load JSON data
+        d3.json("agg.json").then(data => {
+            // Extract and format the data from the JSON file
+            const formattedData = Object.keys(data.date).map(key => ({
+                date: new Date(data.date[key]),
+                사고건수: data['사고건수'][key],
+                사망자수: data['사망자수'][key],
+                중상자수: data['중상자수'][key],
+                경상자수: data['경상자수'][key],
+                부상신고자수: data['부상신고자수'][key],
+                rate: data['rate'][key] // Assuming 'rate' is a field in your JSON
+            }));
+
+            // Set the dimensions of the SVG canvas
+            const margin = {top: 20, right: 30, bottom: 50, left: 60},
+                  width = 800 - margin.left - margin.right,
+                  height = 600 - margin.top - margin.bottom;
+
+            // Append the SVG object to the body of the page
+            const svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // X axis
+            const x = d3.scaleLinear()
+                .domain(d3.extent(formattedData, d => d.rate))
+                .range([0, width]);
+
+            svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x).ticks(10))
+                .append("text")
+                .attr("y", height - 250)
+                .attr("x", width / 2)
+                .attr("text-anchor", "end")
+                .attr("stroke", "black")
+                .text("Rate");
+
+            // Y axis
+            const y = d3.scaleLinear()
+                .domain(d3.extent(formattedData, d => d['사고건수']))
+                .range([height, 0]);
+
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 20)
+                .attr("dy", "-5.1em")
+                .attr("text-anchor", "end")
+                .attr("stroke", "black")
+                .text("Count");
+
+            // Tooltip
+            const tooltip = d3.select("body").append("div")
+                .style("position", "absolute")
+                .style("visibility", "hidden")
+                .style("background", "#f8f8f8")
+                .style("border", "1px solid #d4d4d4")
+                .style("padding", "10px")
+                .style("border-radius", "4px")
+                .style("font-size", "12px");
+
+            // Add dots
+            svg.selectAll("dot")
+                .data(formattedData)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.rate))
+                .attr("cy", d => y(d['사고건수']))
+                .attr("r", 5)
+                .style("fill", "blue")
+                .on("mouseover", (event, d) => {
+                    tooltip.style("visibility", "visible")
+                        .html(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}<br>
+                               사고건수: ${d['사고건수']}<br>
+                               사망자수: ${d['사망자수']}<br>
+                               중상자수: ${d['중상자수']}<br>
+                               경상자수: ${d['경상자수']}<br>
+                               부상신고자수: ${d['부상신고자수']}<br>
+                               Rate: ${d.rate}`);
+                })
+                .on("mousemove", event => {
+                    tooltip.style("top", (event.pageY - 50) + "px")
+                           .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", () => {
+                    tooltip.style("visibility", "hidden");
+                });
+
+            // Add the legend
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 10)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("Rate vs Count");
+        });
+    </script>
+</body>
+</html>
+

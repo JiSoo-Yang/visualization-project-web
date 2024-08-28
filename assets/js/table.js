@@ -35,9 +35,3 @@ export function loadAccidentTable2() {
         })
         .catch(error => console.error('Error fetching the accident data:', error));
 }
-
-// // 페이지 로드 시 각 표 데이터를 로드하는 함수 호출
-// document.addEventListener('DOMContentLoaded', () => {
-//     loadAccidentTable1();
-//     loadAccidentTable2();
-// });

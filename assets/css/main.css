@@ -2421,7 +2421,11 @@ input, select, textarea {
 /* Graph */
 	.container {
 		display: flex;
-		justify-content: space-between;
+		justify-content: column;
+	}
+	.graph-container {
+		display: flex;
+		justify-content: column;
 	}
 	
 	.content, .graph {
