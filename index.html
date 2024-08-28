@@ -12,6 +12,18 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script type="module">
+			import { WholeMap } from './assets/js/visualization.js';
+			import { loadAccidentTable1 } from './assets/js/table.js';
+			import { loadAccidentTable2 } from './assets/js/table.js';
+			import { graph1 } from './assets/js/visualization.js';
+	
+			// 페이지 로드 시 함수 실행
+			WholeMap();
+			loadAccidentTable1();
+			loadAccidentTable2();
+			graph1();
+		</script>
 	</head>	
 	<body class="landing is-preload">
 
@@ -105,17 +117,32 @@
 								</div>
 							</div>
 						</div>
-
-
 					</div>
 				</section>
 
-				<!-- Drive-->
-				<!-- <section id="drive" class="wrapper style1 drive">
-						<div class="inner">
-							<h2>흠.. 그러면 오늘은 어디로 가볼까?</h2>
-						</div>
-				</section> -->
+				<!-- Drive Section -->
+				<section id="drive" class="wrapper style6">
+					<div class="inner">
+						<header class="major">
+							<h0><span style="color: black;">흠.. 그러면 오늘은 어디로 가볼까?</span></h0>
+						</header>
+						<button id="openButton" class="open-btn">차고 열기 !</button>
+					</div>
+				</section>
+
+				<!-- Next Section -->
+				<section id="next-section" class="wrapper style7">
+					<div class="inner">
+						<header class="major">
+							<h2>지역별 지도를 봐볼까?</h2>
+						</header>
+						<!-- 지도 표시 영역 -->
+						<div id="Map" style="width: 100%; height: 500px;"></div>
+						<!-- 테이블 표시 영역 -->
+						<div id="accident-table" style="margin-top: 20px;"></div>
+					</div>
+				</section>
+				
 
 				<!-- Two -->
 					<section id="two" class="wrapper alt style2">
@@ -125,14 +152,19 @@
 								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
 							</div>
 						</section>
-						<section class="spotlight">
-							<div class="image"><img src="images/pic02.jpg" alt="" /></div><div class="content">
+						<div class="container">
+							<div class="content">
+								<!-- 여기에 텍스트 내용 -->
 								<h2>특정 기간의 교통사고 추이는 어떻게 변화했을까?</h2>
 								<p>[가설1] 고령화와 저출산의 영향으로 어린이 인구가 감소하면서, <span style="text-decoration: underline; text-decoration-color: red; text-underline-offset: 0.2em; text-decoration-thickness: 2px;">어린이날의 교통사고 발생 건수도 감소할 것이다.</span></p>
 								<p>[가설2] 비대면 명절 문화의 확산 등 사회적 변화로 인해 <span style="text-decoration: underline; text-decoration-color: red; text-underline-offset: 0.2em; text-decoration-thickness: 2px;">명절 기간 동안의 유동인구가 감소하면서 교통사고 발생 건수도 줄어들 것이다.</span></p>
 								<p>[가설3] 월드컵 기간에는 유동인구가 증가하여 <span style="text-decoration: underline; text-decoration-color: red; text-underline-offset: 0.2em; text-decoration-thickness: 2px;">교통사고 발생 건수도 증가할 것이다.</span></p>
 							</div>
-						</section>
+							<div class="graph1">
+								<!-- D3.js 그래프가 들어갈 위치 -->
+								<svg></svg>
+							</div>
+						</div>						
 						<section class="spotlight">
 							<div class="image"><img src="images/pic03.jpg" alt="" /></div><div class="content">
 								<h2>미세먼지에 따른 교통사고건수 변화는?</h2>
@@ -213,6 +245,7 @@
 			</div>
 
 		<!-- Scripts -->
+			<!-- Load jQuery and related plugins -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.scrollex.min.js"></script>
 			<script src="assets/js/jquery.scrolly.min.js"></script>
@@ -220,10 +253,11 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-			<!-- D3.js와 Danfo.js가 사용자 스크립트 전에 로드되도록 하세요 -->
-			<script src="https://d3js.org/d3.v6.min.js"></script>
+
+			<!-- Load D3 and TopoJSON -->
 			<script src="https://unpkg.com/topojson@3"></script>
-			<script src="assets/js/D3.js"></script>
-			<script src="assets/js/table.js"></script>
+			<script src="https://d3js.org/d3.v6.min.js"></script>
+			<script src="assets/js/animation.js"></script>
+
 	</body>
 </html>

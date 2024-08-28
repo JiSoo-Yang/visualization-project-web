@@ -8,7 +8,7 @@
 */
 
 html, body, div, span, applet, object,
-iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
+iframe, h0, h1, h2, h3, h4, h5, h6, p, blockquote,
 pre, a, abbr, acronym, address, big, cite,
 code, del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var, b,
@@ -162,7 +162,7 @@ input, select, textarea {
 		margin: 0 0 2em 0;
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	h0, h1, h2, h3, h4, h5, h6 {
 		color: #fff;
 		font-weight: 800;
 		letter-spacing: 0.225em;
@@ -171,10 +171,13 @@ input, select, textarea {
 		text-transform: uppercase;
 	}
 
-		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+		h0 a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			color: inherit;
 			text-decoration: none;
 		}
+	h0 {
+		font-size: 2em;
+	}
 
 	h2 {
 		font-size: 1.35em;
@@ -2415,8 +2418,25 @@ input, select, textarea {
 	table.alt tfoot {
 		border-top: 0;
 	}
+/* Graph */
+	.container {
+		display: flex;
+		justify-content: space-between;
+	}
 	
-
+	.content, .graph {
+		flex: 1;
+		padding: 20px;
+	}
+	
+	/* 반응형 디자인 */
+	@media (max-width: 768px) {
+		.container {
+			flex-direction: column;
+		}
+	}
+	
+	
 /* Button */
 
 	input[type="submit"],
@@ -3336,6 +3356,96 @@ input, select, textarea {
 			}
 
 		}
+
+	/* 배경 이미지 설정 */
+	#drive {
+		background: url('../../images/drive.jpg') no-repeat center center;
+		background-size: cover;
+		height: 100vh;
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		overflow: hidden; /* 문이 위로 올라갈 때 넘치지 않도록 설정 */
+	}
+
+	/* 버튼 스타일 */
+	.open-btn {
+		padding: 5px 10px;
+		font-size: 1.2em;
+		cursor: pointer;
+		border: none;
+		background-color: #333;
+		color: #fff;
+		transition: background-color 0.3s;
+	}
+
+	.open-btn:hover {
+		background-color: #555;
+	}
+
+	/* 문 애니메이션 */
+	@keyframes doorOpenVertical {
+		0% {
+			height: 100%;
+			top: 0;
+		}
+		100% {
+			height: 0;
+			top: -100%;
+		}
+	}
+
+	#drive.opening:before,
+	#drive.opening:after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 50%;
+		background: rgba(0, 0, 0, 0.8); /* 문 색상 */
+		z-index: 10;
+	}
+
+	#drive.opening:before {
+		top: 0;
+		animation: doorOpenVertical 1.5s forwards;
+	}
+
+	#drive.opening:after {
+		bottom: 0;
+		animation: doorOpenVertical 1.5s forwards;
+		animation-delay: 0.5s; /* 위쪽 문보다 약간 늦게 올라가도록 설정 */
+	}
+
+	/* 섹션 전환 애니메이션 */
+	@keyframes slideUp {
+		0% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(-100%);
+		}
+	}
+
+	#drive.opening {
+		animation: slideUp 2s forwards;
+	}
+
+	/* 다음 섹션 기본 스타일 */
+	#next-section {
+		opacity: 0;
+		transform: translateY(50px);
+		transition: opacity 1s ease, transform 1s ease;
+	}
+
+	/* 다음 섹션이 보일 때 */
+	#next-section.visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
 
 /* Page Wrapper + Menu */
 
