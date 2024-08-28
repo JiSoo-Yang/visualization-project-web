@@ -12,11 +12,6 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<!-- D3.js와 Danfo.js가 사용자 스크립트 전에 로드되도록 하세요 -->
-		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-		<script src="https://d3js.org/d3.v6.min.js"></script>
-		<script src="https://unpkg.com/topojson@3"></script>
-		<script src="assets/js/choroplethMap.js"></script>
 	</head>	
 	<body class="landing is-preload">
 
@@ -35,8 +30,6 @@
 											<li><a href="index.html">Home</a></li>
 											<li><a href="generic.html">Generic</a></li>
 											<li><a href="elements.html">Elements</a></li>
-											<li><a href="#">Sign Up</a></li>
-											<li><a href="#">Log In</a></li>
 										</ul>
 									</div>
 								</li>
@@ -61,34 +54,68 @@
 				<section id="one" class="wrapper style1 special">
 					<div class="inner">
 						<header class="major">
-							<h2>그 전에,<br />
+							<h2>먼저,<br />
 								전국에서 교통사고가 많이 발생하는 지역은 어디일까?</h2>
-							<p>전국 교통사고 다발 지역 시각화 (2012-2021)</p>
+							<p>전국 교통사고 다발 지역 시각화 (2014-2023)</p>
 						</header>
 						<!-- 지도 표시 영역 -->
-						<div id="choroplethMap" style="width: 100%; height: 500px;"></div>
-				
-						<!-- 표 추가 영역 -->
-						<header class="major" style="margin-top: 40px;">
-							<h3>⦁ 사고지역위치명으로 합산한 사고 다발 지역 (전국 Top20)</h3>
-						</header>
-						<div class="table-wrapper">
-							<table id="accidentTable">
-								<thead>
-									<tr>
-										<th>순위</th>
-										<th>사고지역위치명</th>
-										<th>사고건수</th>
-									</tr>
-								</thead>
-								<tbody>
-									<!-- JavaScript에서 데이터가 추가됩니다 -->
-								</tbody>
-							</table>
+						<div id="Map" style="width: 100%; height: 500px;"></div>
+
+						<!-- 첫 번째와 두 번째 표 영역을 하나의 컨테이너로 묶음 -->
+						<div class="table-container">
+							<!-- 첫 번째 표 -->
+							<div class="major">
+								<header class="major">
+									<h3><span style="color: #f5d25f;">사고지역위치명</span>으로 합산한 사고 다발 지역 (Top10)</h3>
+								</header>
+								<div class="table-wrapper">
+									<table id="accidentTable1">
+										<thead>
+											<tr>
+												<th>순위</th>
+												<th>사고지역위치명</th>
+												<th>사고건수</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- JavaScript에서 데이터가 추가됩니다 -->
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<!-- 두 번째 표 -->
+							<div class="table-wrapper">
+								<header class="major">
+									<h3><span style="color: #f5d25f;">시군구명</span>으로 합산한 사고 다발 지역 (Top10)</h3>
+								</header>
+								<div class="table-wrapper">
+									<table id="accidentTable2">
+										<thead>
+											<tr>
+												<th>순위</th>
+												<th>시군구명</th>
+												<th>사고건수</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- JavaScript에서 데이터가 추가됩니다 -->
+										</tbody>
+									</table>
+								</div>
+							</div>
 						</div>
+
+
 					</div>
 				</section>
-				
+
+				<!-- Drive-->
+				<!-- <section id="drive" class="wrapper style1 drive">
+						<div class="inner">
+							<h2>흠.. 그러면 오늘은 어디로 가볼까?</h2>
+						</div>
+				</section> -->
 
 				<!-- Two -->
 					<section id="two" class="wrapper alt style2">
@@ -159,11 +186,11 @@
 					<section id="cta" class="wrapper style4">
 						<div class="inner">
 							<header>
-								<h2>Arcue ut vel commodo</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum endrerit imperdiet amet eleifend fringilla.</p>
+								<h2>SNU BigData Fintech AI</h2>
+								<p>6조 - 김재현 박주홍 선소휘 심준구 양지수</p>
 							</header>
 							<ul class="actions stacked">
-								<li><a href="#" class="button fit primary">Activate</a></li>
+								<li><a href="#" class="button fit primary">Join Us</a></li>
 								<li><a href="#" class="button fit">Learn More</a></li>
 							</ul>
 						</div>
@@ -193,6 +220,10 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<!-- D3.js와 Danfo.js가 사용자 스크립트 전에 로드되도록 하세요 -->
+			<script src="https://d3js.org/d3.v6.min.js"></script>
+			<script src="https://unpkg.com/topojson@3"></script>
+			<script src="assets/js/D3.js"></script>
 			<script src="assets/js/table.js"></script>
 	</body>
 </html>

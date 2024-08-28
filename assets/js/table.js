@@ -1,11 +1,9 @@
-// table.js
-
-// 사고 다발 지역 데이터를 가져와서 표에 표시하는 함수
-function loadAccidentData() {
-    fetch('data/top20_accident_locations.json')
+// 사고 다발 지역 데이터를 가져와서 첫 번째 표에 표시하는 함수
+function loadAccidentTable1() {
+    fetch('data/top10_accident_locations.json')
         .then(response => response.json())
         .then(data => {
-            const tableBody = document.querySelector('#accidentTable tbody');
+            const tableBody = document.querySelector('#accidentTable1 tbody');
             data.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -17,10 +15,14 @@ function loadAccidentData() {
             });
         })
         .catch(error => console.error('Error fetching the accident data:', error));
-        fetch('data/top20_accident_grouped.json')
+}
+
+// 시군구별 사고 다발 지역 데이터를 가져와서 두 번째 표에 표시하는 함수
+function loadAccidentTable2() {
+    fetch('data/top10_accident_grouped.json')
         .then(response => response.json())
         .then(data => {
-            const tableBody = document.querySelector('#accidentTable tbody');
+            const tableBody = document.querySelector('#accidentTable2 tbody');
             data.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -34,6 +36,8 @@ function loadAccidentData() {
         .catch(error => console.error('Error fetching the accident data:', error));
 }
 
-// 페이지 로드 시 데이터를 로드하는 함수 호출
-document.addEventListener('DOMContentLoaded', loadAccidentData);
-
+// 페이지 로드 시 각 표 데이터를 로드하는 함수 호출
+document.addEventListener('DOMContentLoaded', () => {
+    loadAccidentTable1();
+    loadAccidentTable2();
+});
