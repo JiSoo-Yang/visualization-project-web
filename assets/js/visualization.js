@@ -37,9 +37,10 @@ export function WholeMap() {
         const tooltip = d3.select('body').append('div')
             .attr('class', 'tooltip')
             .style('position', 'absolute')
-            .style('background-color', 'white')
+            .style('background-color', 'midnightblue')
             .style('border', '1px solid #ccc')
             .style('padding', '5px')
+            .style('font-size', '11px')
             .style('display', 'none')
             .style('pointer-events', 'none');
 
@@ -57,12 +58,14 @@ export function WholeMap() {
             .attr('stroke-width', 1)
             .on('mouseover', function (event, d) {
                 const code = d.properties.SIG_CD;
+                const kor_nm = d.properties.SIG_KOR_NM;
                 const count = accidentCountMap.get(code) || 0;
                 tooltip.style('display', 'block')
-                    .html(`SIG_CD: ${code}<br>사고건수: ${count}`);
+                    .html(`행정구역: ${kor_nm}<br>사고건수: ${count}`);
                 d3.select(this)
                     .attr('stroke', 'black')
                     .attr('stroke-width', 2);
+                console.log(code, count);
             })
             .on('mousemove', function (event) {
                 tooltip.style('left', (event.pageX + 10) + 'px')
@@ -116,124 +119,105 @@ export function WholeMap() {
 
     }).catch(error => console.error('데이터 로드 또는 처리 중 오류 발생:', error));
 }
-// export function WholeMap() {
-//     // 데이터 파일 로드
-//     Promise.all([
-//         d3.json('data/법정구역_시군구.geojson'),  // GeoJSON 파일 로드
-//         d3.json('data/accident_data.json')        // 사고 데이터 파일 로드
-//     ]).then(([geoData, accidentData]) => {
 
-//         // 사고 건수에 따른 색상 맵핑을 위한 Map 객체 생성
-//         const accidentCountMap = new Map();
-//         accidentData.forEach(d => {
-//             const code = d.위치코드_시군구;  // 시군구 코드
-//             const count = d.사고건수;       // 사고 건수
-//             if (accidentCountMap.has(code)) {
-//                 accidentCountMap.set(code, accidentCountMap.get(code) + count);
-//             } else {
-//                 accidentCountMap.set(code, count);
-//             }
-//         });
+export function LocalMap() {
+    // Get selected region from the dropdown
+    const selectedRegion = document.getElementById('regionSelect').value;
 
-//         // SVG 크기 설정
-//         const width = document.getElementById('Map').clientWidth;
-//         const height = 500;  // 고정 높이 설정
-//         const svg = d3.select('#Map').append('svg')
-//             .attr('width', width)
-//             .attr('height', height);
+    // Load the specific accident data for the selected region and the GeoJSON for map boundaries
+    Promise.all([
+        d3.json(`data/시도별json_new/${selectedRegion}_accidents.json`), // Region-specific accident data
+        d3.json('data/법정구역_시군구.geojson')  // Static GeoJSON for the map boundaries
+    ]).then(([accidentData, geoData]) => {
+        const accidentCountMap = new Map();
 
-//         // 색상 스케일 정의 (연한 하늘색 -> 진한 파란색)
-//         const colorScale = d3.scaleLinear()
-//             .domain([0, d3.max(Array.from(accidentCountMap.values()))])
-//             .range(['#ADD8E6', '#08306B']);  // 연한 하늘색 -> 진한 파란색
+        // Create a map of accident counts by region code
+        accidentData.forEach(d => {
+            accidentCountMap.set(d.위치코드_시군구, d.사고건수);
+        });
 
-//         // 투영법과 경로 설정
-//         const projection = d3.geoMercator().fitSize([width, height], geoData);
-//         const path = d3.geoPath().projection(projection);
+        // Render the map specifically in the "Map2" div
+        renderLocalMap(geoData, accidentCountMap, 'Map2');
+        // Assuming loadLocalAccidentTable is a function that will handle table rendering
+        loadLocalAccidentTable(accidentData);
+    }).catch(error => console.error('Error loading data:', error));
+}
 
-//         // 도구를 추가
-//         const tooltip = d3.select('body').append('div')
-//             .attr('class', 'tooltip')
-//             .style('position', 'absolute')
-//             .style('background-color', 'white')
-//             .style('border', '1px solid #ccc')
-//             .style('padding', '5px')
-//             .style('display', 'none')
-//             .style('pointer-events', 'none');
+function renderLocalMap(geoData, accidentCountMap, mapElementId) {
+    const container = document.getElementById(mapElementId);
+    const width = container.clientWidth;
+    const height = 500; // Set a fixed height for the map
+    const svg = d3.select(`#${mapElementId}`).html('').append('svg')
+        .attr('width', width)
+        .attr('height', height);
 
-//         // 지도 그리기
-//         svg.selectAll('path')
-//             .data(geoData.features)
-//             .enter().append('path')
-//             .attr('d', path)
-//             .attr('fill', d => {
-//                 const code = d.properties.SIG_CD;
-//                 const count = accidentCountMap.get(code) || 0;
-//                 return colorScale(count);
-//             })
-//             .attr('stroke', '#fff')
-//             .attr('stroke-width', 1)
-//             .on('mouseover', function (event, d) {
-//                 const code = d.properties.SIG_CD;
-//                 const count = accidentCountMap.get(code) || 0;
-//                 tooltip.style('display', 'block')
-//                     .html(`<strong>Code:</strong> ${code}<br><strong>사고건수:</strong> ${count}`);
-//                 d3.select(this)
-//                     .attr('stroke', 'black')
-//                     .attr('stroke-width', 2);
-//             })
-//             .on('mousemove', function (event) {
-//                 tooltip.style('left', (event.pageX + 10) + 'px')
-//                     .style('top', (event.pageY - 10) + 'px');
-//             })
-//             .on('mouseout', function () {
-//                 tooltip.style('display', 'none');
-//                 d3.select(this)
-//                     .attr('stroke', '#fff')
-//                     .attr('stroke-width', 1);
-//             });
+    const colorScale = d3.scaleLinear()
+        .domain([0, Math.max(...accidentCountMap.values())])
+        .range(['#ADD8E6', '#08306B']);
 
-//         // 세로 범례 추가
-//         const legendHeight = 200;  // 범례의 높이
-//         const legendWidth = 20;  // 범례의 폭
-//         const legendScale = d3.scaleLinear()
-//             .domain(colorScale.domain())
-//             .range([legendHeight, 0]);
+    const projection = d3.geoMercator().fitSize([width, height], geoData);
+    const path = d3.geoPath().projection(projection);
 
-//         const legendAxis = d3.axisRight(legendScale)
-//             .ticks(5)
-//             .tickSize(6);
+    // Adding a tooltip to the body using D3
+    const tooltip = d3.select('body').append('div')
+        .attr('class', 'tooltip')
+        .style('position', 'absolute')
+        .style('background-color', 'midnightblue')
+        .style('color', 'white')
+        .style('padding', '5px')
+        .style('border', '1px solid #ccc')
+        .style('display', 'none')
+        .style('pointer-events', 'none')
+        .style('font-size', '11px');
 
-//         const legend = svg.append('g')
-//             .attr('transform', `translate(${width - legendWidth - 20}, ${(height - legendHeight) / 2})`);
+    svg.selectAll('path')
+        .data(geoData.features)
+        .enter().append('path')
+        .attr('d', path)
+        .attr('fill', d => {
+            const code = d.properties.SIG_CD;
+            const count = accidentCountMap.get(code) || 0;
+            return colorScale(count);
+        })
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 1)
+        .on('mouseover', function(event, d) {
+            const code = d.properties.SIG_CD;
+            const kor_nm = d.properties.SIG_KOR_NM || 'N/A';  // Ensuring that there is a fallback if name is not defined
+            const count = accidentCountMap.get(code) || 0;
+            tooltip.style('display', 'block')
+                .html(`행정구역: ${kor_nm}<br>사고건수: ${count}`);
+            d3.select(this)
+                .attr('stroke', 'black')
+                .attr('stroke-width', 2);
+        })
+        .on('mousemove', function(event) {
+            tooltip.style('left', `${event.pageX + 10}px`)
+                   .style('top', `${event.pageY - 10}px`);
+        })
+        .on('mouseout', function() {
+            tooltip.style('display', 'none');
+            d3.select(this)
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 1);
+        });
+}
 
-//         const gradient = legend.append("defs")
-//             .append("linearGradient")
-//             .attr("id", "gradient")
-//             .attr("x1", "0%")
-//             .attr("y1", "100%")
-//             .attr("x2", "0%")
-//             .attr("y2", "0%");
+function loadLocalAccidentTable(accidentData) {
+    // Sort data to get top accident locations
+    accidentData.sort((a, b) => b.사고건수 - a.사고건수);
+    const top10 = accidentData.slice(0, 10);
 
-//         gradient.append("stop")
-//             .attr("offset", "0%")
-//             .attr("stop-color", "#ADD8E6");  // 연한 하늘색
+    const table = document.getElementById('local-accident-table');
+    table.innerHTML = '<table><tr><th>Rank</th><th>Location</th><th>Accidents</th></tr>';
 
-//         gradient.append("stop")
-//             .attr("offset", "100%")
-//             .attr("stop-color", "#08306B");  // 진한 파란색
+    top10.forEach((item, index) => {
+        const row = `<tr><td>${index + 1}</td><td>${item.시군구명}</td><td>${item.사고건수}</td></tr>`;
+        table.innerHTML += row;
+    });
+    table.innerHTML += '</table>';
+}
 
-//         legend.append("rect")
-//             .attr("width", legendWidth)
-//             .attr("height", legendHeight)
-//             .style("fill", "url(#gradient)");
-
-//         legend.append("g")
-//             .attr("transform", `translate(${legendWidth}, 0)`)
-//             .call(legendAxis);
-
-//     }).catch(error => console.error('데이터 로드 또는 처리 중 오류 발생:', error));
-// }
 
 export function graph1() {
     // Load the data from the JSON file.

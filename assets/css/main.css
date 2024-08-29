@@ -17,7 +17,7 @@ form, label, legend, table, caption, tbody,
 tfoot, thead, tr, th, td, article, aside,
 canvas, details, embed, figure, figcaption,
 footer, header, hgroup, menu, nav, output, ruby,
-section, summary, time, mark, audio, video {
+section, summary, time, mark, audio, video, graph {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -2418,7 +2418,7 @@ input, select, textarea {
 	table.alt tfoot {
 		border-top: 0;
 	}
-/* Graph */
+	/* Graph */
 	.container {
 		display: flex;
 		justify-content: column;
@@ -2439,7 +2439,6 @@ input, select, textarea {
 			flex-direction: column;
 		}
 	}
-	
 	
 /* Button */
 
