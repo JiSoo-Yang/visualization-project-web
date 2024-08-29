@@ -23,7 +23,7 @@
 	
 			// 페이지 로드 시 함수 실행
 			WholeMap();
-			// LocalMap();
+			LocalMap();
 			loadAccidentTable1();
 			loadAccidentTable2();
 			graph1();
@@ -142,7 +142,7 @@
 						<header class="major">
 							<h2>지역별 지도를 봐볼까?</h2>
 							<!-- 시도 선택 selectbox 추가 -->
-							<select id="regionSelect" onchange="LocalMap()">
+							<select id="regionSelect" onchange="LocalMap">
 								<option value="강원도">강원도</option>
 								<option value="경기도">경기도</option>
 								<option value="경상북도">경상북도</option>

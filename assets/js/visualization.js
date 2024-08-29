@@ -121,101 +121,89 @@ export function WholeMap() {
 }
 
 export function LocalMap() {
-    // Get selected region from the dropdown
     const selectedRegion = document.getElementById('regionSelect').value;
 
-    // Load the specific accident data for the selected region and the GeoJSON for map boundaries
     Promise.all([
-        d3.json(`data/시도별json_new/${selectedRegion}_accidents.json`), // Region-specific accident data
-        d3.json('data/법정구역_시군구.geojson')  // Static GeoJSON for the map boundaries
+        d3.json(`data/시도별json_new/${selectedRegion}_accidents.json`),
+        d3.json('data/법정구역_시군구.geojson')
     ]).then(([accidentData, geoData]) => {
         const accidentCountMap = new Map();
-
-        // Create a map of accident counts by region code
         accidentData.forEach(d => {
-            accidentCountMap.set(d.위치코드_시군구, d.사고건수);
+            accidentCountMap.set(String(d.위치코드_시군구), { 사고건수: d.사고건수, 시군구명: d.시군구명 });
         });
 
-        // Render the map specifically in the "Map2" div
         renderLocalMap(geoData, accidentCountMap, 'Map2');
-        // Assuming loadLocalAccidentTable is a function that will handle table rendering
-        loadLocalAccidentTable(accidentData);
-    }).catch(error => console.error('Error loading data:', error));
+        loadLocalAccidentTable(accidentData.slice(0, 5));  // Top 5 사고 다발 지역
+    }).catch(error => {
+        console.error('Error loading data:', error);
+    });
 }
 
 function renderLocalMap(geoData, accidentCountMap, mapElementId) {
     const container = document.getElementById(mapElementId);
     const width = container.clientWidth;
-    const height = 500; // Set a fixed height for the map
-    const svg = d3.select(`#${mapElementId}`).html('').append('svg')
+    const height = 500;
+    const svg = d3.select(`#${mapElementId}`).append('svg')
         .attr('width', width)
         .attr('height', height);
 
     const colorScale = d3.scaleLinear()
-        .domain([0, Math.max(...accidentCountMap.values())])
+        .domain([0, d3.max([...accidentCountMap.values()].map(x => x.사고건수))])
         .range(['#ADD8E6', '#08306B']);
 
     const projection = d3.geoMercator().fitSize([width, height], geoData);
     const path = d3.geoPath().projection(projection);
 
-    // Adding a tooltip to the body using D3
+    // Define tooltip
     const tooltip = d3.select('body').append('div')
         .attr('class', 'tooltip')
         .style('position', 'absolute')
+        .style('visibility', 'hidden')
         .style('background-color', 'midnightblue')
         .style('color', 'white')
         .style('padding', '5px')
-        .style('border', '1px solid #ccc')
-        .style('display', 'none')
-        .style('pointer-events', 'none')
-        .style('font-size', '11px');
+        .style('border-radius', '5px');
 
     svg.selectAll('path')
         .data(geoData.features)
         .enter().append('path')
         .attr('d', path)
         .attr('fill', d => {
-            const code = d.properties.SIG_CD;
-            const count = accidentCountMap.get(code) || 0;
-            return colorScale(count);
+            const accidentInfo = accidentCountMap.get(String(d.properties.SIG_CD));
+            return accidentInfo ? colorScale(accidentInfo.사고건수) : '#FFF';
         })
         .attr('stroke', '#fff')
         .attr('stroke-width', 1)
         .on('mouseover', function(event, d) {
-            const code = d.properties.SIG_CD;
-            const kor_nm = d.properties.SIG_KOR_NM || 'N/A';  // Ensuring that there is a fallback if name is not defined
-            const count = accidentCountMap.get(code) || 0;
-            tooltip.style('display', 'block')
-                .html(`행정구역: ${kor_nm}<br>사고건수: ${count}`);
-            d3.select(this)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 2);
-        })
-        .on('mousemove', function(event) {
-            tooltip.style('left', `${event.pageX + 10}px`)
-                   .style('top', `${event.pageY - 10}px`);
+            const accidentInfo = accidentCountMap.get(String(d.properties.SIG_CD));
+            if (accidentInfo) {
+                d3.select(this).attr('stroke', 'black').attr('stroke-width', 2);
+                tooltip.html(`행정구역: ${accidentInfo.시군구명}<br>사고건수: ${accidentInfo.사고건수}`)
+                       .style('visibility', 'visible')
+                       .style('left', `${event.pageX + 10}px`)
+                       .style('top', `${event.pageY - 10}px`);
+            }
         })
         .on('mouseout', function() {
-            tooltip.style('display', 'none');
-            d3.select(this)
-                .attr('stroke', '#fff')
-                .attr('stroke-width', 1);
+            d3.select(this).attr('stroke', '#fff').attr('stroke-width', 1);
+            tooltip.style('visibility', 'hidden');
         });
 }
 
 function loadLocalAccidentTable(accidentData) {
-    // Sort data to get top accident locations
-    accidentData.sort((a, b) => b.사고건수 - a.사고건수);
-    const top10 = accidentData.slice(0, 10);
+    // 상위 5개 데이터만 정렬 (사고건수가 많은 순서로)
+    const topAccidents = accidentData.sort((a, b) => b.사고건수 - a.사고건수).slice(0, 5);
 
     const table = document.getElementById('local-accident-table');
-    table.innerHTML = '<table><tr><th>Rank</th><th>Location</th><th>Accidents</th></tr>';
+    // 테이블 헤더 설정
+    table.innerHTML = '<tr><th>Rank</th><th>Location</th><th>Accidents</th></tr>';
 
-    top10.forEach((item, index) => {
-        const row = `<tr><td>${index + 1}</td><td>${item.시군구명}</td><td>${item.사고건수}</td></tr>`;
-        table.innerHTML += row;
+    // 테이블 데이터 채우기
+    topAccidents.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${index + 1}</td><td>${item.시군구명}</td><td>${item.사고건수}</td>`;
+        table.appendChild(row);
     });
-    table.innerHTML += '</table>';
 }
 
 
