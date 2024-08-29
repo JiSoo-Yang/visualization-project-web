@@ -133,7 +133,7 @@ export function LocalMap() {
         });
 
         renderLocalMap(geoData, accidentCountMap, 'Map2');
-        loadLocalAccidentTable(accidentData.slice(0, 5));  // Top 5 사고 다발 지역
+        //loadLocalAccidentTable(accidentData.slice(0, 5));  // Top 5 사고 다발 지역
     }).catch(error => {
         console.error('Error loading data:', error);
     });
@@ -190,21 +190,22 @@ function renderLocalMap(geoData, accidentCountMap, mapElementId) {
         });
 }
 
-function loadLocalAccidentTable(accidentData) {
-    // 상위 5개 데이터만 정렬 (사고건수가 많은 순서로)
-    const topAccidents = accidentData.sort((a, b) => b.사고건수 - a.사고건수).slice(0, 5);
+// export function loadLocalAccidentTable(accidentData) {
+//     // 상위 5개 데이터만 정렬 (사고건수가 많은 순서로)
+//     const topAccidents = accidentData.sort((a, b) => b.사고건수 - a.사고건수).slice(0, 5);
 
-    const table = document.getElementById('local-accident-table');
-    // 테이블 헤더 설정
-    table.innerHTML = '<tr><th>Rank</th><th>Location</th><th>Accidents</th></tr>';
+//     const table = document.getElementById('local-accident-table');
+//     // 테이블 헤더 설정
+//     table.innerHTML = '<tr><th>Rank</th><th>Location</th><th>Accidents</th></tr>';
 
-    // 테이블 데이터 채우기
-    topAccidents.forEach((item, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${index + 1}</td><td>${item.시군구명}</td><td>${item.사고건수}</td>`;
-        table.appendChild(row);
-    });
-}
+//     // 테이블 데이터 채우기
+//     topAccidents.forEach((item, index) => {
+//         const row = document.createElement('tr');
+//         row.innerHTML = `<td>${index + 1}</td><td>${item.시군구명}</td><td>${item.사고건수}</td>`;
+//         table.appendChild(row);
+//     });
+// }
+
 
 
 export function graph1() {
@@ -329,203 +330,9 @@ export function graph1() {
 }
 
 export function graph2() {
-    Promise.all([
-        d3.json("data/luner_new_year_accident.json"),
-        d3.json("data/chuseok_accident.json")
-    ]).then(data => {
-        const [lunarData, chuseokData] = data;
-
-        // 데이터 정제 및 집계 함수
-        function aggregateData(data) {
-            return d3.groups(data, d => d.발생년도).map(([year, values]) => ({
-                year,
-                사고건수: d3.sum(values, d => d.사고건수),
-                사망자수: d3.sum(values, d => d.사망자수),
-                중상자수: d3.sum(values, d => d.중상자수),
-                경상자수: d3.sum(values, d => d.경상자수),
-            }));
-        }
-
-        // 데이터 집계
-        const lunarStats = aggregateData(lunarData);
-        const chuseokStats = aggregateData(chuseokData);
-
-        // 차트 그리는 함수
-        function drawChart(containerId, stats, title) {
-            const margin = {top: 10, right: 30, bottom: 40, left: 60},
-                width = 460 - margin.left - margin.right,
-                height = 400 - margin.top - margin.bottom;
-
-            const svg = d3.select(".graph2 svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
-
-            // X scale
-            const x = d3.scaleBand()
-                .domain(stats.map(d => d.year))
-                .range([0, width])
-                .padding(0.2);
-
-            // Y scale
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(stats, d => d.사고건수)])
-                .range([height, 0]);
-
-            // X축 및 Y축 추가
-            svg.append("g")
-                .attr("transform", `translate(0,${height})`)
-                .call(d3.axisBottom(x).tickFormat(d3.format("d")));
-
-            svg.append("g")
-                .call(d3.axisLeft(y));
-
-            // 선 추가 함수
-            function addLine(color, key) {
-                const line = d3.line()
-                    .x(d => x(d.year) + x.bandwidth() / 2)
-                    .y(d => y(d[key]));
-
-                svg.append("path")
-                    .datum(stats)
-                    .attr("fill", "none")
-                    .attr("stroke", color)
-                    .attr("stroke-width", 1.5)
-                    .attr("d", line);
-            }
-
-            // 각 항목별 선 그리기
-            addLine("steelblue", "사고건수");
-            addLine("red", "사망자수");
-            addLine("green", "중상자수");
-            addLine("orange", "경상자수");
-
-            // 타이틀 추가
-            svg.append("text")
-                .attr("x", (width / 2))
-                .attr("y", 0 - (margin.top / 2))
-                .attr("text-anchor", "middle")
-                .style("font-size", "16px")
-                .style("text-decoration", "underline")
-                .text(title);
-        }
-
-        // 그래프 그리기
-        drawChart("#lunarChartContainer", lunarStats, '설날 교통사고 추이 (2016-2023)');
-        drawChart("#chuseokChartContainer", chuseokStats, '추석 교통사고 추이 (2016-2023)');
-    });
 }
 
 
 export function chart2() {
-    // Load JSON data
-    d3.json("data/agg.json").then(data => {
-        // Parse the date and convert numeric fields from strings to numbers
-        data.forEach(d => {
-            d.date = new Date(d.date); // Convert Unix timestamp to Date object
-            d.사고건수 = +d.사고건수;
-            d.사망자수 = +d.사망자수;
-            d.중상자수 = +d.중상자수;
-            d.경상자수 = +d.경상자수;
-            d.부상신고자수 = +d.부상신고자수;
-            d.rate = +d.rate;
-        });
-
-        // Set the dimensions of the SVG canvas
-        const margin = {top: 20, right: 30, bottom: 50, left: 60},
-              width = 800 - margin.left - margin.right,
-              height = 600 - margin.top - margin.bottom;
-
-        // Append the SVG object to the correct container
-        d3.select(".chart2 svg").remove(); // Remove existing SVG if present to avoid overlap
-        const svg = d3.select(".chart2") // Ensure that #chart2 is correctly targeted
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        // X axis (Rate)
-        const x = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.rate)) // Set domain based on rate
-            .range([0, width]);
-
-        svg.append("g")
-            .attr("transform", `translate(0, ${height})`)
-            .call(d3.axisBottom(x).ticks(10))
-            .append("text")
-            .attr("y", 40) // Adjust position
-            .attr("x", width / 2)
-            .attr("text-anchor", "middle")
-            .attr("fill", "white")
-            .attr("font-size", "16px")   
-            .text("Rate");
-
-        // Y axis (사고건수)
-        const y = d3.scaleLinear()
-            .domain(d3.extent(data, d => d['사고건수'])) // Set domain based on 사고건수
-            .range([height, 0]);
-
-        svg.append("g")
-            .call(d3.axisLeft(y))
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -60)  // y 값을 더 큰 음수로 설정하여 거리를 넓힘
-            .attr("x", -height / 2)
-            .attr("dy", "1em")
-            .attr("text-anchor", "middle")
-            .attr("fill", "white")
-            .attr("font-size", "16px")
-            .text("Count");
-        
-
-        // Tooltip
-        const tooltip = d3.select("body").append("div")
-            .style("position", "absolute")
-            .style("visibility", "hidden")
-            .style("background", "#f8f8f8")
-            .style("border", "1px solid #d4d4d4")
-            .style("padding", "10px")
-            .style("border-radius", "4px")
-            .style("font-size", "12px")
-            .style("color", "blue");
-
-        // Add dots
-        svg.selectAll("circle")
-            .data(data) // Use the processed data
-            .enter()
-            .append("circle")
-            .attr("cx", d => x(d.rate))
-            .attr("cy", d => y(d['사고건수']))
-            .attr("r", 5)
-            .style("fill", "lemonchiffon")
-            .on("mouseover", (event, d) => {
-                tooltip.style("visibility", "visible")
-                    .html(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}<br>
-                           사고건수: ${d['사고건수']}<br>
-                           사망자수: ${d['사망자수']}<br>
-                           중상자수: ${d['중상자수']}<br>
-                           경상자수: ${d['경상자수']}<br>
-                           부상신고자수: ${d['부상신고자수']}<br>
-                           Rate: ${d.rate}`);
-            })
-            .on("mousemove", event => {
-                tooltip.style("top", (event.pageY - 50) + "px")
-                       .style("left", (event.pageX + 10) + "px");
-            })
-            .on("mouseout", () => {
-                tooltip.style("visibility", "hidden");
-            });
-
-        // // Add the legend
-        // svg.append("text")
-        //     .attr("x", width / 2)
-        //     .attr("y", height + margin.bottom - 10)
-        //     .attr("text-anchor", "middle")
-        //     .style("color", "white")
-        //     .text("Rate");
-    })
-    .catch(error => console.error("Error loading the data:", error)); // Add error handling
 }
 
